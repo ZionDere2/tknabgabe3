@@ -139,16 +139,19 @@ static char *reduce_payload(const char *payload) {
         word[len] = '\0';
         to_lowercase(word);
 
-        const char *num_start = ptr;
-        while (*ptr && isdigit((unsigned char)*ptr)) {
-            ++ptr;
-        }
         int value = 0;
-        if (ptr > num_start) {
+        if (*ptr && isdigit((unsigned char)*ptr)) {
+            const char *num_start = ptr;
+            while (*ptr && isdigit((unsigned char)*ptr)) {
+                ++ptr;
+            }
             value = atoi(num_start);
-        }
-        if (value == 0) {
-            value = (int)(ptr - num_start);
+        } else if (*ptr == '1') {
+            const char *ones_start = ptr;
+            while (*ptr == '1') {
+                ++ptr;
+            }
+            value = (int)(ptr - ones_start);
         }
         add_word(&words, &word_count, &word_capacity, word, value);
         free(word);
